@@ -35,3 +35,8 @@ size = Vector3(1.078, 0, 69.199)
 
 [node name="Player" parent="." instance=ExtResource("1_tyffc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 0)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.3294518, 0, 0, 0, 1, 4.443655, 1.7602096, -0.85535145)
+use_collision = true
+size = Vector3(1, 0.47058105, 1)
