@@ -42,7 +42,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		camera.rotation.x=clamp(camera.rotation.x,deg_to_rad(-40),deg_to_rad(60))
 		
 func _physics_process(delta: float) -> void:
-	if Input.is_action_just_pressed("fire_gun"):
+	if Input.is_action_just_pressed("fire_gun")and not weapon.is_shooting:
 		attack()
 	if Input.is_action_just_pressed("throw") and can_throw:
 		grenade_throw()
@@ -143,6 +143,9 @@ func attack()->void:
 	var result:Dictionary=space_state.intersect_ray(query)
 	if result:
 		test_raycast(result.get("position"))
+		var collider = result.collider
+		if collider and collider.is_in_group("enemy"):
+			collider.enemy_hit(weapon.damage)
 	
 func test_raycast(position:Vector3)->void:
 	var bullet_hole_ins=bullet_hole.instantiate()

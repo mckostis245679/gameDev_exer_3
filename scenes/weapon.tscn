@@ -82,3 +82,9 @@ stream = ExtResource("4_5csnh")
 libraries = {
 &"": SubResource("AnimationLibrary_xrduv")
 }
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.6
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
