@@ -1,6 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://c2ub70yptvp2v"]
+[gd_scene load_steps=18 format=3 uid="uid://c2ub70yptvp2v"]
 
 [ext_resource type="Script" uid="uid://din8wode60d5y" path="res://scripts/player.gd" id="1_p0vlq"]
+[ext_resource type="Script" uid="uid://kfiq1qt4m5we" path="res://scripts/camera_3d.gd" id="2_6eyey"]
+[ext_resource type="Script" uid="uid://b7am33wmsj4d0" path="res://scripts/player_state_machine.gd" id="2_mdl7e"]
+[ext_resource type="Script" uid="uid://33t3krj2w6x5" path="res://scripts/idle_state.gd" id="2_v6fml"]
+[ext_resource type="Script" uid="uid://dsoa5vwbvxylf" path="res://scripts/moving_state.gd" id="3_3li8b"]
+[ext_resource type="PackedScene" uid="uid://s5k2duoxcrlq" path="res://scenes/weapon.tscn" id="3_6eyey"]
+[ext_resource type="Script" uid="uid://caq35o6y0wae6" path="res://scripts/sprint_state.gd" id="5_qu4a1"]
+[ext_resource type="Script" uid="uid://c0tm4oempqdbb" path="res://scenes/jump_state.gd" id="6_cw2d6"]
+[ext_resource type="Script" uid="uid://dm4x4nyjrg7gj" path="res://scripts/crouch_state.gd" id="7_khinc"]
+[ext_resource type="Script" uid="uid://b0aq5sg4y4yfe" path="res://scripts/moving_crouch_state.gd" id="8_khinc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p0vlq"]
 
@@ -109,8 +118,14 @@ mesh = SubResource("CapsuleMesh_cvunv")
 skeleton = NodePath("../..")
 
 [node name="head" type="Node3D" parent="."]
+script = ExtResource("2_6eyey")
 
 [node name="Camera3D" type="Camera3D" parent="head"]
+
+[node name="Weapon" parent="head/Camera3D" instance=ExtResource("3_6eyey")]
+
+[node name="GrenadePos" type="Marker3D" parent="head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0119629)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -121,3 +136,33 @@ libraries = {
 shape = SubResource("SphereShape3D_p0vlq")
 target_position = Vector3(0, 0.5, 0)
 debug_shape_custom_color = Color(0.6392157, 0.8862745, 0, 1)
+
+[node name="PlayerStateMachine" type="Node" parent="." node_paths=PackedStringArray("CURRENT_STATE")]
+script = ExtResource("2_mdl7e")
+CURRENT_STATE = NodePath("IdleState")
+
+[node name="IdleState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("2_v6fml")
+
+[node name="MovingState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("3_3li8b")
+
+[node name="SprintState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("5_qu4a1")
+
+[node name="JumpState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("6_cw2d6")
+metadata/_custom_type_script = "uid://dnajnag7xsjn6"
+
+[node name="CrouchState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("7_khinc")
+metadata/_custom_type_script = "uid://dnajnag7xsjn6"
+
+[node name="MovingCrouchState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("8_khinc")
+
+[node name="CanThrowTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[connection signal="timeout" from="CanThrowTimer" to="." method="_on_can_throw_timer_timeout"]

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://caj27l647pc4i"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ob0a0"]
+albedo_color = Color(0.84313726, 0.7294118, 0.078431375, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_75sdo"]
+
+[node name="BulletHole" type="MeshInstance3D"]
+transform = Transform3D(-0.024948891, 0.28539613, 0.00057780667, 0, -0.0005800103, 0.28648457, 0.28539672, 0.024948841, 5.0510866e-05, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_ob0a0")
+mesh = SubResource("SphereMesh_75sdo")

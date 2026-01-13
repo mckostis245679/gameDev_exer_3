@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://d31af58rkj2kb"]
+
+[ext_resource type="Script" uid="uid://dvh4wldu25nyb" path="res://scripts/grenade.gd" id="1_cvyik"]
+[ext_resource type="PackedScene" uid="uid://cd0plsgge6dak" path="res://scenes/explosion.tscn" id="2_wxtds"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wxtds"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_vhiwl"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_76ndk"]
+
+[node name="Grenade" type="RigidBody3D"]
+script = ExtResource("1_cvyik")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+shape = SubResource("SphereShape3D_wxtds")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+mesh = SubResource("SphereMesh_vhiwl")
+skeleton = NodePath("../..")
+
+[node name="Radius" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Radius"]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+shape = SubResource("SphereShape3D_76ndk")
+
+[node name="FuseTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+autostart = true
+
+[node name="Explosion" parent="." instance=ExtResource("2_wxtds")]
+
+[connection signal="timeout" from="FuseTimer" to="." method="_on_fuse_timer_timeout"]
