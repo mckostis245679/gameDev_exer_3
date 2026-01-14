@@ -3,6 +3,8 @@ extends Node3D
 var shake_strength := 0.0
 var shake_fade := 0.0
 var original_position := Vector3.ZERO
+@onready var weapon: Node3D = $Camera3D/Weapon
+@onready var label: Label = $Camera3D/CanvasLayer/HBoxContainer/Label
 
 func _ready():
 	original_position = position
@@ -22,3 +24,4 @@ func _process(delta: float) -> void:
 		)
 	else:
 		position = original_position
+	label.text = "%d/%d" % [weapon.bullets, weapon.MAX_BULLETS]

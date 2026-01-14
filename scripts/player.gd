@@ -46,6 +46,8 @@ func _physics_process(delta: float) -> void:
 		attack()
 	if Input.is_action_just_pressed("throw") and can_throw:
 		grenade_throw()
+	if Input.is_action_just_pressed("reload") and  not weapon.is_shooting:
+		weapon.reload()
 	## Add the gravity.
 	#if not is_on_floor():
 		#velocity += get_gravity() * delta

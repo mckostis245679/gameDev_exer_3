@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://c2ub70yptvp2v"]
+[gd_scene load_steps=19 format=3 uid="uid://c2ub70yptvp2v"]
 
 [ext_resource type="Script" uid="uid://din8wode60d5y" path="res://scripts/player.gd" id="1_p0vlq"]
 [ext_resource type="Script" uid="uid://kfiq1qt4m5we" path="res://scripts/camera_3d.gd" id="2_6eyey"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://33t3krj2w6x5" path="res://scripts/idle_state.gd" id="2_v6fml"]
 [ext_resource type="Script" uid="uid://dsoa5vwbvxylf" path="res://scripts/moving_state.gd" id="3_3li8b"]
 [ext_resource type="PackedScene" uid="uid://s5k2duoxcrlq" path="res://scenes/weapon.tscn" id="3_6eyey"]
+[ext_resource type="Texture2D" uid="uid://gwv1w1v3seu2" path="res://assets/bullet.png" id="4_d3wef"]
 [ext_resource type="Script" uid="uid://caq35o6y0wae6" path="res://scripts/sprint_state.gd" id="5_qu4a1"]
 [ext_resource type="Script" uid="uid://c0tm4oempqdbb" path="res://scenes/jump_state.gd" id="6_cw2d6"]
 [ext_resource type="Script" uid="uid://dm4x4nyjrg7gj" path="res://scripts/crouch_state.gd" id="7_khinc"]
@@ -123,6 +124,44 @@ script = ExtResource("2_6eyey")
 [node name="Camera3D" type="Camera3D" parent="head"]
 
 [node name="Weapon" parent="head/Camera3D" instance=ExtResource("3_6eyey")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="head/Camera3D"]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="head/Camera3D/CanvasLayer"]
+custom_minimum_size = Vector2(100, 100)
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -113.0
+offset_top = -148.0
+offset_right = -13.0
+offset_bottom = -48.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(2, 2)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="head/Camera3D/CanvasLayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "6/6"
+
+[node name="MarginContainer" type="MarginContainer" parent="head/Camera3D/CanvasLayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_top = 2
+
+[node name="TextureRect" type="TextureRect" parent="head/Camera3D/CanvasLayer/HBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(15, 15)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("4_d3wef")
+expand_mode = 1
 
 [node name="GrenadePos" type="Marker3D" parent="head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0119629)

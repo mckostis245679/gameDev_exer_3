@@ -1,11 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://d31af58rkj2kb"]
+[gd_scene load_steps=7 format=3 uid="uid://d31af58rkj2kb"]
 
 [ext_resource type="Script" uid="uid://dvh4wldu25nyb" path="res://scripts/grenade.gd" id="1_cvyik"]
 [ext_resource type="PackedScene" uid="uid://cd0plsgge6dak" path="res://scenes/explosion.tscn" id="2_wxtds"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wxtds"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wxtds"]
+albedo_color = Color(0.41144925, 0.77903765, 0.031162929, 1)
+
 [sub_resource type="SphereMesh" id="SphereMesh_vhiwl"]
+material = SubResource("StandardMaterial3D_wxtds")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_76ndk"]
 
