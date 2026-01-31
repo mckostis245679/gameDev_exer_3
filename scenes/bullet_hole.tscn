@@ -6,6 +6,6 @@ albedo_color = Color(0.84313726, 0.7294118, 0.078431375, 1)
 [sub_resource type="SphereMesh" id="SphereMesh_75sdo"]
 
 [node name="BulletHole" type="MeshInstance3D"]
-transform = Transform3D(-0.024948891, 0.28539613, 0.00057780667, 0, -0.0005800103, 0.28648457, 0.28539672, 0.024948841, 5.0510866e-05, 0, 0, 0)
+transform = Transform3D(-0.0121920565, 0.13946784, 0.00027661538, -2.4274709e-11, -0.0002776703, 0.13999973, 0.13946812, 0.012192032, 2.4181252e-05, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_ob0a0")
 mesh = SubResource("SphereMesh_75sdo")

@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=3 uid="uid://bt2nt1o3oapvy"]
+
+[ext_resource type="Script" uid="uid://dugix8byw8gru" path="res://scripts/c_4.gd" id="1_wlnpo"]
+[ext_resource type="PackedScene" uid="uid://cd0plsgge6dak" path="res://scenes/explosion.tscn" id="2_j73xk"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_t0yim"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wlnpo"]
+albedo_color = Color(0.827451, 0.11764706, 0.043137256, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_m1e00"]
+material = SubResource("StandardMaterial3D_wlnpo")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_qctuv"]
+
+[node name="C4" type="RigidBody3D"]
+script = ExtResource("1_wlnpo")
+
+[node name="Explosion" parent="." instance=ExtResource("2_j73xk")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+shape = SubResource("BoxShape3D_t0yim")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+mesh = SubResource("BoxMesh_m1e00")
+
+[node name="Radius" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Radius"]
+transform = Transform3D(22.662457, 0, 0, 0, 22.662457, 0, 0, 0, 22.662457, 0, 0, 0)
+shape = SubResource("SphereShape3D_qctuv")

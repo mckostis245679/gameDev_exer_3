@@ -12,7 +12,7 @@ func update(delta)->void:
 	
 	if Global.player.velocity.length()>1 and Global.player.is_on_floor():
 		transition.emit("MovingState")
-	if Input.is_action_just_pressed("jump") and not Global.player.is_crouched:
+	if Input.is_action_just_pressed("jump") and not Global.player.is_crouched and Global.player.is_on_floor() :
 		transition.emit("JumpState")
 	if Input.is_action_just_pressed("crouch") and Global.player.is_on_floor():
 		transition.emit("CrouchState")

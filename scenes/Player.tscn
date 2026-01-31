@@ -1,7 +1,7 @@
 [gd_scene load_steps=19 format=3 uid="uid://c2ub70yptvp2v"]
 
 [ext_resource type="Script" uid="uid://din8wode60d5y" path="res://scripts/player.gd" id="1_p0vlq"]
-[ext_resource type="Script" uid="uid://kfiq1qt4m5we" path="res://scripts/camera_3d.gd" id="2_6eyey"]
+[ext_resource type="Script" uid="uid://kg3wslugkykm" path="res://scripts/head_shake.gd" id="2_d3wef"]
 [ext_resource type="Script" uid="uid://b7am33wmsj4d0" path="res://scripts/player_state_machine.gd" id="2_mdl7e"]
 [ext_resource type="Script" uid="uid://33t3krj2w6x5" path="res://scripts/idle_state.gd" id="2_v6fml"]
 [ext_resource type="Script" uid="uid://dsoa5vwbvxylf" path="res://scripts/moving_state.gd" id="3_3li8b"]
@@ -10,7 +10,6 @@
 [ext_resource type="Script" uid="uid://caq35o6y0wae6" path="res://scripts/sprint_state.gd" id="5_qu4a1"]
 [ext_resource type="Script" uid="uid://c0tm4oempqdbb" path="res://scenes/jump_state.gd" id="6_cw2d6"]
 [ext_resource type="Script" uid="uid://dm4x4nyjrg7gj" path="res://scripts/crouch_state.gd" id="7_khinc"]
-[ext_resource type="Script" uid="uid://b0aq5sg4y4yfe" path="res://scripts/moving_crouch_state.gd" id="8_khinc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p0vlq"]
 
@@ -65,7 +64,7 @@ tracks/0/path = NodePath("CollisionShape3D:shape:height")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.001, 0.33333334),
+"times": PackedFloat32Array(0.001, 0.4),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [2.0, 1.5]
@@ -77,7 +76,7 @@ tracks/1/path = NodePath("head:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.33333334),
+"times": PackedFloat32Array(0, 0.4),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(0, 0.25, 0), Vector3(0, 0, 0)]
@@ -89,7 +88,7 @@ tracks/2/path = NodePath("CollisionShape3D:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.001, 0.33333334),
+"times": PackedFloat32Array(0.001, 0.4),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(0, 0, 0), Vector3(0, -0.25, 0)]
@@ -107,6 +106,25 @@ _data = {
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_p0vlq"]
 
+[sub_resource type="GDScript" id="GDScript_6eyey"]
+script/source = "class_name MovingCrouchState extends State
+
+var SPEED:=3.0
+var ACCELERATION:=0.1
+var DECELERATION:=0.25
+
+func update(delta)->void:
+
+	Global.player.update_gravity(delta)
+	Global.player.update_input(SPEED,ACCELERATION,DECELERATION)
+	Global.player.update_velocity()
+	if Input.is_action_pressed(\"SPRINT\"):
+		Global.player.toggle_crouch()
+		transition.emit(\"SprintState\")
+	if Input.is_action_just_pressed(\"crouch\") and Global.player.is_on_floor():
+		transition.emit(\"CrouchState\")
+"
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_p0vlq")
 
@@ -119,15 +137,20 @@ mesh = SubResource("CapsuleMesh_cvunv")
 skeleton = NodePath("../..")
 
 [node name="head" type="Node3D" parent="."]
-script = ExtResource("2_6eyey")
 
-[node name="Camera3D" type="Camera3D" parent="head"]
+[node name="GrenadePos" type="Marker3D" parent="head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0119629)
 
-[node name="Weapon" parent="head/Camera3D" instance=ExtResource("3_6eyey")]
+[node name="headShake" type="Node3D" parent="head"]
+script = ExtResource("2_d3wef")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="head/Camera3D"]
+[node name="Camera3D" type="Camera3D" parent="head/headShake"]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="head/Camera3D/CanvasLayer"]
+[node name="Weapon" parent="head/headShake/Camera3D" instance=ExtResource("3_6eyey")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="head/headShake/Camera3D"]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="head/headShake/Camera3D/CanvasLayer"]
 custom_minimum_size = Vector2(100, 100)
 anchors_preset = 3
 anchor_left = 1.0
@@ -144,27 +167,24 @@ scale = Vector2(2, 2)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="head/Camera3D/CanvasLayer/HBoxContainer"]
+[node name="Label" type="Label" parent="head/headShake/Camera3D/CanvasLayer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "6/6"
 
-[node name="MarginContainer" type="MarginContainer" parent="head/Camera3D/CanvasLayer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="head/headShake/Camera3D/CanvasLayer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/margin_top = 2
 
-[node name="TextureRect" type="TextureRect" parent="head/Camera3D/CanvasLayer/HBoxContainer/MarginContainer"]
+[node name="TextureRect" type="TextureRect" parent="head/headShake/Camera3D/CanvasLayer/HBoxContainer/MarginContainer"]
 custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("4_d3wef")
 expand_mode = 1
-
-[node name="GrenadePos" type="Marker3D" parent="head"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0119629)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -198,7 +218,7 @@ script = ExtResource("7_khinc")
 metadata/_custom_type_script = "uid://dnajnag7xsjn6"
 
 [node name="MovingCrouchState" type="Node" parent="PlayerStateMachine"]
-script = ExtResource("8_khinc")
+script = SubResource("GDScript_6eyey")
 
 [node name="CanThrowTimer" type="Timer" parent="."]
 wait_time = 5.0

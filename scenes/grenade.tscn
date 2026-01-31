@@ -31,7 +31,7 @@ transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 shape = SubResource("SphereShape3D_76ndk")
 
 [node name="FuseTimer" type="Timer" parent="."]
-wait_time = 3.0
+wait_time = 0.885
 one_shot = true
 autostart = true
 

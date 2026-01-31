@@ -1,39 +1,42 @@
 extends CharacterBody3D
 
+@onready var head_shake: Node3D = $head/headShake
 
-@onready var camera: Camera3D = $head/Camera3D
+@onready var camera: Camera3D = $head/headShake/Camera3D
 @onready var head: Node3D = $head
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var shape_cast_3d: ShapeCast3D = $ShapeCast3D
 @onready var can_throw_timer: Timer = $CanThrowTimer
-@onready var weapon: Node3D = $head/Camera3D/Weapon
-
+@onready var weapon: Node3D = $head/headShake/Camera3D/Weapon
+@export var c4_scene: PackedScene
 var bullet_hole=preload("res://scenes/bullet_hole.tscn")
-const BOB_FREQ=0.2
+const BOB_FREQ=1
 const BOB_AMPL=0.1
 var t_bob:float=0
 const JUMP_VELOCITY = 4.5
 const sensitivity =0.005
 @onready var grenade_pos: Marker3D = $head/GrenadePos
-
+var has_c4:bool
 var is_crouched:bool
 const CROUCH_ANIM_SPEED=3.0
 
 const BASE_FOV=75.0
 const FOV_CHANGE=2.0
 var grenade=preload("res://scenes/grenade.tscn")
-var can_throw=true
 
+var can_throw=true
+var planted_c4: Node3D = null
 
 func _ready() -> void:
 	Global.player=self
 	shape_cast_3d.add_exception($".")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	is_crouched=false
+	has_c4=false
 	animation_player.play("crouch")
 	animation_player.seek(0.0, true)
 	animation_player.stop()
-
+	c4_scene=preload("res://scenes/c_4.tscn")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -42,12 +45,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		camera.rotation.x=clamp(camera.rotation.x,deg_to_rad(-40),deg_to_rad(60))
 		
 func _physics_process(delta: float) -> void:
-	if Input.is_action_just_pressed("fire_gun")and not weapon.is_shooting:
+	if Input.is_action_just_pressed("fire_gun") and !weapon.is_shooting and !weapon.is_reloading:
 		attack()
 	if Input.is_action_just_pressed("throw") and can_throw:
 		grenade_throw()
-	if Input.is_action_just_pressed("reload") and  not weapon.is_shooting:
+	if Input.is_action_just_pressed("reload")  and !weapon.is_shooting and !weapon.is_reloading:
 		weapon.reload()
+	if Input.is_action_just_pressed("c4_action"):
+		c4_throw(c4_scene)
 	## Add the gravity.
 	#if not is_on_floor():
 		#velocity += get_gravity() * delta
@@ -148,12 +153,15 @@ func attack()->void:
 		var collider = result.collider
 		if collider and collider.is_in_group("enemy"):
 			collider.enemy_hit(weapon.damage)
-	
+		if collider and collider.is_in_group("door"):
+			collider.door.toggle()
+
+
 func test_raycast(position:Vector3)->void:
 	var bullet_hole_ins=bullet_hole.instantiate()
 	get_tree().root.add_child(bullet_hole_ins)
 	bullet_hole_ins.global_position=position
-	await get_tree().create_timer(3).timeout
+	await get_tree().create_timer(0.3).timeout
 	bullet_hole_ins.queue_free()
 	
 	
@@ -170,6 +178,25 @@ func grenade_throw()->void:
 	can_throw=false
 	can_throw_timer.start()
 	
+func c4_throw(c4_scene: PackedScene)->void:
+	if planted_c4 and is_instance_valid(planted_c4):
+		detonate_c4()
+	else:
+		var c4_ins=c4_scene.instantiate()
+		get_tree().root.add_child(c4_ins)
+		c4_ins.position=grenade_pos.global_position
+			
+		var force =-5
+		var upDirection=2
+			
+		var playerRotation =camera.global_transform.basis.z.normalized()
+		c4_ins.apply_central_impulse(playerRotation* force +Vector3(0,upDirection,0))
+		planted_c4=c4_ins
+	
+
+func detonate_c4():
+	planted_c4.detonate()
+	planted_c4 = null
 
 func _on_can_throw_timer_timeout() -> void:
 	can_throw=true
